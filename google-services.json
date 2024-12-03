@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "861545078404",
+    "project_id": "test-auth-63e94",
+    "storage_bucket": "test-auth-63e94.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:861545078404:android:e62a7f218dd7e371de2cd1",
+        "android_client_info": {
+          "package_name": "com.peteroh.testapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_vm0JzYzYWU3cfcWY-UWUWaWHAYYIjeE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
