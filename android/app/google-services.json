@@ -12,7 +12,20 @@
           "package_name": "com.peteroh.testapp"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "861545078404-gip4n6lbrl4ttaikp377ar8pol0ei0g2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.peteroh.testapp",
+            "certificate_hash": "0eb6e5e71153263dea0aa83c2908555042f32bb3"
+          }
+        },
+        {
+          "client_id": "861545078404-cjoqadktsgenk7u7gp7k1hggsqh68ohs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyA_vm0JzYzYWU3cfcWY-UWUWaWHAYYIjeE"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "861545078404-cjoqadktsgenk7u7gp7k1hggsqh68ohs.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "861545078404-son85imc3m6hbacva1iocv1tnp1oms44.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.peteroh.testapp"
+              }
+            }
+          ]
         }
       }
     }
