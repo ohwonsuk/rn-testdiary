@@ -3,32 +3,62 @@ import { View } from 'react-native';
 import Typography from './components/Typography';
 import { GoogleSignin, GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
+import { useSetRecoilState } from 'recoil';
+import { stateUserInfo } from './states/stateUserInfo';
 
 const SplashView = (props) => {
-  useEffect(() => {
-    GoogleSignin.configure({
-      webClientId: '861545078404-cjoqadktsgenk7u7gp7k1hggsqh68ohs.apps.googleusercontent.com',
-      offlineAccess: true
-    });
-  }, []);
+
   const [showLoginButton, setShowLoginButton] = useState(false);
+  const setUserInfo = useSetRecoilState(stateUserInfo);
 
   const signinUserIndentify = useCallback(async (idToken) => {
     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
     const result = await auth().signInWithCredential(googleCredential);
-    console.log('result', result);
+    // console.log('result', result);
+    setShowLoginButton(false);
+    const userDBRefKey = `/users/${result.user.uid}`;
+    const userResult = await database().ref(userDBRefKey).once('value').then((snapshot) => {
+      return snapshot.val();
+    });
+
+    console.log(userResult);
+    const now = new Date().toISOString();
+
+    if (userResult === null) {
+      await database().ref(userDBRefKey).set({
+        name: result.additionalUserInfo.profile.name,
+        profileImage: result.additionalUserInfo.profile.picture,
+        uid: result.user.uid,
+        password: '',
+        createdAt: now,
+        lastLoginAt: now
+      })
+    } else {
+      await database().ref(userDBRefKey).update({
+        lastLoginAt: now
+      })
+    }
+
+    const userInfo = await database().ref(userDBRefKey).once('value').then((snapshot) => snapshot.val());
+
+    console.log('userInfo', userInfo);
+    setUserInfo(userInfo);
+
+    props.onFinishLoad();
+
   }, []);
 
   const onPressGoogleLogin = useCallback(async () => {
     try {
-      await GoogleSignin.signOut();
+      // await GoogleSignin.signOut();
       console.log('user select');
       await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
       console.log('user select pop-up');
       const userInfo = await GoogleSignin.signIn();
       idToken = userInfo.data?.idToken;
-      console.log('User Info:', userInfo);
+      // console.log('User Info:', userInfo);
       if (idToken) {
         console.log('idToken', idToken);
         signinUserIndentify(userInfo.data.idToken);
@@ -37,23 +67,14 @@ const SplashView = (props) => {
       }
     } catch (error) {
       console.error('Google Sign-In Error:', error);
-      console.log('원인찾기');
     }
-    // await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-    // const { idToken } = await GoogleSignin.signIn();
-    // console.log('idToken', idToken);
-    // signinUserIndentify(idToken);
   }, []);
 
   const userSilentLogin = useCallback(async () => {
     try {
-      const result = await GoogleSignin.signInSilently();
-      if (result.idToken) {
-        signinUserIndentify(result.idToken);
-        console.log('silentlogin check', result.idToken);
-      } else {
-        throw new Error('No idToken available');
-      }
+      const { idToken } = await GoogleSignin.signInSilently();
+      signinUserIndentify(idToken);
+      console.log('silentlogin check', result.idToken);
     } catch (ex) {
       setShowLoginButton(true);
       console.log('first login', ex);
