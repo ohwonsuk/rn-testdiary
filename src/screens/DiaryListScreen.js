@@ -8,6 +8,8 @@ import Icons from '../components/Icons';
 import RemoteImage from '../components/RemoteImage';
 import Spacer from '../components/Spacer';
 import Typography from '../components/Typography';
+import { useRecoilValue } from 'recoil';
+import { stateDiaryList } from '../states/stateDiaryList';
 
 const DiaryListScreen = () => {
 
@@ -22,31 +24,33 @@ const DiaryListScreen = () => {
     navigation.navigate('AddDiary');
   }, []);
 
-  const [data, setData] = useState([{
-    id: 0,
-    title: 'TITLE_01',
-    content: 'CONTENT_01',
-    createdAt: '2024-01-01',
-    updatedAt: '2024-01-01',
-    imageUrl: 'https://docs.expo.dev/static/images/tutorial/initial-layout.png'
-  },
-  {
-    id: 1,
-    title: 'TITLE_02',
-    content: 'CONTENT_02',
-    createdAt: '2024-01-01',
-    updatedAt: '2024-01-01',
-    imageUrl: 'https://docs.expo.dev/static/images/tutorial/initial-layout.png'
-  },
-  {
-    id: 2,
-    title: 'TITLE_03',
-    content: 'CONTENT_03',
-    createdAt: '2024-01-01',
-    updatedAt: '2024-01-01',
-    imageUrl: null
-  },
-  ]);
+  const data = useRecoilValue(stateDiaryList);
+
+  // const [data, setData] = useState([{
+  //   id: 0,
+  //   title: 'TITLE_01',
+  //   content: 'CONTENT_01',
+  //   createdAt: '2024-01-01',
+  //   updatedAt: '2024-01-01',
+  //   imageUrl: 'https://docs.expo.dev/static/images/tutorial/initial-layout.png'
+  // },
+  // {
+  //   id: 1,
+  //   title: 'TITLE_02',
+  //   content: 'CONTENT_02',
+  //   createdAt: '2024-01-01',
+  //   updatedAt: '2024-01-01',
+  //   imageUrl: 'https://docs.expo.dev/static/images/tutorial/initial-layout.png'
+  // },
+  // {
+  //   id: 2,
+  //   title: 'TITLE_03',
+  //   content: 'CONTENT_03',
+  //   createdAt: '2024-01-01',
+  //   updatedAt: '2024-01-01',
+  //   imageUrl: null
+  // },
+  // ]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -70,10 +74,10 @@ const DiaryListScreen = () => {
                 navigation.navigate('DiaryDetail', { item })
               }}>
                 <View style={{ paddingVertical: 12 }}>
-                  {item.imageUrl !== null && (
+                  {typeof item.photoUrl !== 'undefined' && (
                     <>
                       <RemoteImage
-                        url={item.imageUrl}
+                        url={item.photoUrl}
                         width={width - 24 * 2}
                         height={(width - 24 * 2) * 0.5}
                         style={{ borderRadius: 8 }}

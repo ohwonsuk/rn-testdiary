@@ -4,14 +4,20 @@ import Header from '../components/Header/Header';
 import { useNavigation } from '@react-navigation/native';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import useImagePickAndUpload from '../hooks/useImagePickAndUpload';
+
 import Button from '../components/Button';
 import RemoteImage from '../components/RemoteImage';
 import Spacer from '../components/Spacer';
 import Typography from '../components/Typography';
+import SingleLineInput from '../components/SingleLineInput';
+import ContentInput from '../components/ContentInput';
+import useCreateDiary from '../hooks/useCreateDiary';
 
 const AddDiaryScreen = () => {
 
   const { width } = useWindowDimensions();
+  const runCreateDiary = useCreateDiary();
+
   const photoSize = useMemo(() => {
     return {
       photoWidth: width,
@@ -21,9 +27,21 @@ const AddDiaryScreen = () => {
 
   const [selectedPhotoUrl, setSelectedPhotoUrl] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+
   const runImagePickAndUpload = useImagePickAndUpload();
 
   const [visibleDatePicker, setVisibleDatePicker] = useState(false);
+
+  const canSave = useMemo(() => {
+    if (selectedDate === null) return false;
+
+    if (title === '') return false;
+
+    if (content === '') return false;
+    return true;
+  }, [selectedDate, title, content]);
 
   const navigation = useNavigation();
   const onPressBack = useCallback(() => {
@@ -41,6 +59,12 @@ const AddDiaryScreen = () => {
     setVisibleDatePicker(true);
   }, []);
 
+  const onPressSave = useCallback(() => {
+    if (!canSave) return;
+
+    runCreateDiary(selectedPhotoUrl, selectedDate, title, content);
+    navigation.goBack();
+  }, [canSave, selectedPhotoUrl, selectedDate, title, content]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -87,6 +111,37 @@ const AddDiaryScreen = () => {
             </Typography>
           </View>
         </Button>
+        <Spacer space={40} />
+
+        <View style={{ paddingHorizontal: 24 }}>
+          <SingleLineInput
+            value={title}
+            onChangeText={setTitle}
+            placeholder='제목을 입력해주세요'
+          />
+        </View>
+        <Spacer space={20} />
+        <View style={{ paddingHorizontal: 24 }}>
+          <ContentInput
+            value={content}
+            onChangeText={setContent}
+            placeholder='있었던 일을 알려주세요'
+          />
+        </View>
+        <Spacer space={40} />
+        <View style={{ paddingHorizontal: 24 }}>
+          <Button onPress={onPressSave}>
+            <View style={{
+              paddingVertical: 16,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: canSave ? 'black' : 'lightgray',
+              borderRadius: 4
+            }}>
+              <Typography color={canSave ? 'white' : 'gray'} fontSize={20}>등록하기</Typography>
+            </View>
+          </Button>
+        </View>
       </ScrollView>
 
       <DateTimePicker
@@ -105,4 +160,4 @@ const AddDiaryScreen = () => {
   )
 }
 
-export default AddDiaryScreen
+export default AddDiaryScreen;
