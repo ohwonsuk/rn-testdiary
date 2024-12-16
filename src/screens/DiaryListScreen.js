@@ -68,7 +68,7 @@ const DiaryListScreen = () => {
             paddingVertical: 32,
           }}
           renderItem={({ item }) => {
-
+            const date = new Date(item.date);
             return (
               <Button onPress={() => {
                 navigation.navigate('DiaryDetail', { item })
@@ -91,7 +91,9 @@ const DiaryListScreen = () => {
                       <Spacer space={4} />
                       <Typography fontSize={12}>{item.content}</Typography>
                     </View>
-                    <Typography fontSize={12}>{item.updatedAt}</Typography>
+                    <Typography fontSize={12}>
+                      {`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`}
+                    </Typography>
                   </View>
                 </View>
               </Button>

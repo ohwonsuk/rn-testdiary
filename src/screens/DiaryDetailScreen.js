@@ -14,8 +14,8 @@ const DiaryDetailScreen = () => {
   const { width } = useWindowDimensions();
   const photoSize = useMemo(() => {
     return {
-      photoWidth: width,
-      photoHeight: width * 0.5
+      photoWidth: width - 12 * 2,
+      photoHeight: (width - 12 * 2) * 0.5
     }
   }, [width]);
   const date = useMemo(() => {
@@ -41,6 +41,7 @@ const DiaryDetailScreen = () => {
             url={route.params.item.photoUrl}
             width={photoSize.photoWidth}
             height={photoSize.photoHeight}
+            style={{ borderRadius: 8, marginLeft: 12, marginTop: 10 }}
           />
         )}
         <Spacer space={20} />
