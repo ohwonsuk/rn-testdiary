@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import Header from '../components/Header/Header';
 import Spacer from '../components/Spacer';
 import { PasswordInputBox } from '../components/PasswordInputBox';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { stateUserInfo } from '../states/stateUserInfo';
 import database from '@react-native-firebase/database';
 import { useNavigation } from '@react-navigation/native';
@@ -12,7 +12,9 @@ export const AddPasswordScreen = () => {
   const [firstInput, setFirstInput] = useState('');
   const [secondInput, setSecondInput] = useState('');
   const [isInputFirst, setIsInputFirst] = useState(true);
-  const userInfo = useRecoilValue(stateUserInfo);
+  const [errorMessage, setErrorMessage] = useState(null);
+
+  const [userInfo, setUserInfo] = useRecoilState(stateUserInfo);
   const navigation = useNavigation();
 
   const onPressBack = useCallback(() => {
@@ -28,6 +30,12 @@ export const AddPasswordScreen = () => {
     await database().ref(userDB).update({
       password: firstInput
     })
+    setUserInfo((prevState) => {
+      return {
+        ...prevState,
+        password: firstInput
+      }
+    });
 
     navigation.goBack();
   }, [firstInput, secondInput, userInfo]);
@@ -40,6 +48,9 @@ export const AddPasswordScreen = () => {
     if (firstInput === secondInput) {
       //저장하기!
       onCompleteInputPassword();
+    } else {
+      setErrorMessage('비밀번호가 다릅니다.');
+      setSecondInput('');
     }
 
   }, [firstInput, secondInput]);
@@ -50,7 +61,7 @@ export const AddPasswordScreen = () => {
         <Header.Group>
           <Header.Icon iconName='arrow-back' onPress={onPressBack} />
           <Spacer space={12} />
-          <Header.Title title='비밀번호 추가' />
+          <Header.Title title={userInfo.password !== '' ? '비밀번호 수정' : '비밀번호 추가'} />
         </Header.Group>
       </Header>
       <View style={{ flex: 1, paddingTop: 32 }}>
@@ -68,6 +79,7 @@ export const AddPasswordScreen = () => {
               setSecondInput(text);
             }
           }}
+          errorMessage={errorMessage}
         />
       </View>
     </View>

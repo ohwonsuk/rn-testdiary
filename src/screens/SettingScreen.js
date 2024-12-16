@@ -37,7 +37,7 @@ const SettingScreen = () => {
       });
       await database().ref(userDB).update({
         profileImage: result[0]
-      })
+      });
     }
   }, [userInfo, runImagePickAndUpload]);
 
@@ -49,6 +49,12 @@ const SettingScreen = () => {
     const userDB = `/users/${userInfo.uid}`;
     await database().ref(userDB).update({
       password: ''
+    });
+    setUserInfo((prevState) => {
+      return {
+        ...prevState,
+        password: ''
+      }
     });
   }, []);
 
@@ -88,12 +94,12 @@ const SettingScreen = () => {
             paddingVertical: 12,
             paddingHorizontal: 24
           }}>
-            <Typography fontSize={16}>비밀번호 추가</Typography>
+            <Typography fontSize={16}>{userInfo.password !== '' ? '비밀번호 수정' : '비밀번호 추가'}</Typography>
             <Icons name='chevron-forward-outline' size={16} />
           </View>
         </Button>
 
-        <Button onPress={onPressClearPassword}>
+        {userInfo.password !== '' && (<Button onPress={onPressClearPassword}>
           <View style={{
             flexDirection: 'row',
             alignItems: 'center',
@@ -103,8 +109,8 @@ const SettingScreen = () => {
           }}>
             <Typography fontSize={16}>비밀번호 초기화</Typography>
           </View>
-        </Button>
-
+        </Button>)
+        }
       </View>
     </View>
   )

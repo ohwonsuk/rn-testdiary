@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 import Typography from './components/Typography';
 import { GoogleSignin, GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
@@ -11,14 +11,17 @@ import { PasswordInputBox } from './components/PasswordInputBox';
 
 const SplashView = (props) => {
 
+  const [loading, setLoading] = useState(false);
   const [showLoginButton, setShowLoginButton] = useState(false);
   const [showPasswordInput, setShowPasswordInput] = useState(false);
   const [inputPassword, setInputPassword] = useState('');
+  const [passwordError, setPasswordError] = useState(null);
 
   const [userInfo, setUserInfo] = useRecoilState(stateUserInfo);
   const runGetDiaryList = useGetDiaryList();
 
   const signinUserIndentify = useCallback(async (idToken) => {
+    setLoading(true);
     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
     const result = await auth().signInWithCredential(googleCredential);
@@ -41,8 +44,6 @@ const SplashView = (props) => {
         createdAt: now,
         lastLoginAt: now
       })
-    } else {
-
     }
 
     const userInfo = await database().ref(userDBRefKey).once('value').then((snapshot) => snapshot.val());
@@ -51,6 +52,8 @@ const SplashView = (props) => {
 
     if (userInfo.password !== '') {
       setShowPasswordInput(true);
+      setLoading(false);
+
       return;
     }
     console.log('userInfo', userInfo);
@@ -87,9 +90,11 @@ const SplashView = (props) => {
   const userSilentLogin = useCallback(async () => {
     try {
       const { idToken } = await GoogleSignin.signInSilently();
+      setLoading(true);
       signinUserIndentify(idToken);
       console.log('silentlogin check', result.idToken);
     } catch (ex) {
+      setLoading(false);
       setShowLoginButton(true);
       console.log('first login', ex);
     }
@@ -105,6 +110,7 @@ const SplashView = (props) => {
       {showLoginButton && <GoogleSigninButton onPress={onPressGoogleLogin} />}
       {showPasswordInput && (
         <PasswordInputBox
+          errorMessage={passwordError}
           value={inputPassword}
           onChangeText={async (text) => {
             setInputPassword(text);
@@ -116,10 +122,15 @@ const SplashView = (props) => {
                   lastLoginAt: now
                 });
                 props.onFinishLoad();
+                setInputPassword('');
+                setPasswordError('비밀번호가 다릅니다.');
               }
             }
           }}
         />
+      )}
+      {loading && (
+        <ActivityIndicator />
       )}
     </View>
   )
