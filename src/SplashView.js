@@ -77,7 +77,7 @@ const SplashView = (props) => {
       idToken = userInfo.data?.idToken;
       // console.log('User Info:', userInfo);
       if (idToken) {
-        console.log('idToken', idToken);
+        // console.log('idToken', idToken);
         signinUserIndentify(userInfo.data.idToken);
       } else {
         console.error('idToken is null');
@@ -92,17 +92,17 @@ const SplashView = (props) => {
       const { idToken } = await GoogleSignin.signInSilently();
       setLoading(true);
       signinUserIndentify(idToken);
-      console.log('silentlogin check', result.idToken);
+      // console.log('silentlogin check', result.idToken);
     } catch (ex) {
       setLoading(false);
       setShowLoginButton(true);
-      console.log('first login', ex);
+      // console.log('first login', ex);
     }
   }, []);
 
   useEffect(() => {
     userSilentLogin();
-    console.log('start');
+    // console.log('start');
   }, [])
 
   return (

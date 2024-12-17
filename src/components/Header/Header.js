@@ -15,7 +15,7 @@ export default Header = (props) => {
       <View style={{
         width: width,
         flexDirection: 'row',
-        hegith: 56,
+        height: 56,
         borderBottomColor: 'gray',
         borderBottomWidth: 1,
         alignItems: 'center',
